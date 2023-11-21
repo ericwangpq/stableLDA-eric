@@ -339,9 +339,9 @@ class StableLDA():
 
             print(cmd)
             os.system(cmd)
-        exit_code = os.system(cmd)
-        if exit_code != 0:
-            raise Exception("external inference failed")
-        print("inference success")
+            exit_code = os.system(cmd)
+            if exit_code != 0:
+                raise Exception("external inference failed")
+            print("inference success")
         except Exception as e:
             print(f"inference failed: {e}")
