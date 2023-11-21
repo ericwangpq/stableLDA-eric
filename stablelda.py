@@ -28,44 +28,56 @@ class StableLDA():
             os.makedirs(output_dir)
 
     def load_data(self, bow_file, vocab_file):
-        print('--------- loading data ----------------')
-        self.text = []
-        with io.open(bow_file, 'r', encoding='utf-8') as f:
-            self.text = [line.split() for line in f.read().splitlines()]
+        try:
+            print('--------- loading data ----------------')
+            self.text = []
+            with io.open(bow_file, 'r', encoding='utf-8') as f:
+                self.text = [line.split() for line in f.read().splitlines()]
 
-        self.vocab = []
-        with io.open(vocab_file, 'r', encoding='utf-8') as f:
-            self.vocab = [line for line in f.read().splitlines()]
+            self.vocab = []
+            with io.open(vocab_file, 'r', encoding='utf-8') as f:
+                self.vocab = [line for line in f.read().splitlines()]
 
-        self.vocab2id = {}
-        for idx, v in enumerate(self.vocab):
-            self.vocab2id[v] = idx
+            self.vocab2id = {}
+            for idx, v in enumerate(self.vocab):
+                self.vocab2id[v] = idx
 
-        self.num_words = len(self.vocab)  # update number of words, sometimes after preprocessing, vocab may shrink
+            self.num_words = len(self.vocab)  # update number of words, sometimes after preprocessing, vocab may shrink
 
-        self.bow = []
-        for doc in self.text:
-            self.bow.append([self.vocab2id[w] for w in doc])
+            self.bow = []
+            for doc in self.text:
+                self.bow.append([self.vocab2id[w] for w in doc])
 
-        self.bow_file = bow_file
-        self.vocab_file = vocab_file
-        self.cluster_file = self.output_dir + 'cluster.dat'
-        self.sample_file = self.output_dir + 'z.dat'
+            self.bow_file = bow_file
+            self.vocab_file = vocab_file
+            self.cluster_file = self.output_dir + 'cluster.dat'
+            self.sample_file = self.output_dir + 'z.dat'
+            print("load_data success.")
+        except Exception as e:
+            print(f"load_data falied: {e}.")
 
     def train(self, bow_file, vocab_file, epochs):
-        self.load_data(bow_file, vocab_file)
-        self.init_word_cluster(self.embed_method)
-        self.initialize()
-        self.save_intermediate()
-        self.inference(epochs)
+        try:
+            self.load_data(bow_file, vocab_file)
+            self.init_word_cluster(self.embed_method)
+            self.initialize()
+            self.save_intermediate()
+            self.inference(epochs)
+            print("train success.")
+        except Exception as e:
+            print(f"train falied: {e}.")
 
     def save_intermediate(self):
-        with open(self.sample_file, 'w') as f:  # save intermediate samples
-            for sample in self.zsamples:
-                f.write(' '.join([str(z) for z in sample]) + '\n')
-        with io.open(self.cluster_file, 'w', encoding='utf-8') as f:  # save word topical clusters
-            for cluster in self.topical_clusters:
-                f.write(','.join(cluster) + '\n')
+        try:
+            with open(self.sample_file, 'w') as f:  # save intermediate samples
+                for sample in self.zsamples:
+                    f.write(' '.join([str(z) for z in sample]) + '\n')
+            with io.open(self.cluster_file, 'w', encoding='utf-8') as f:  # save word topical clusters
+                for cluster in self.topical_clusters:
+                    f.write(','.join(cluster) + '\n')
+            print("save_intermediate success.")
+        except Exception as e:
+            print(f"save_intermediate falied: {e}.")
                 
     def init_word_cluster(self, embed_method):
         self.w2v_model = None
@@ -308,21 +320,28 @@ class StableLDA():
 
 
     def inference(self, epochs):
-        # make sure argument values are correctly setup before passing to C++ main function
-        cmd = 'train'    # windows
-        # cmd = './train'  # linux
-        cmd += ' -f {}'.format(self.bow_file)
-        cmd += ' -v {}'.format(self.vocab_file)
-        cmd += ' -c {}'.format(self.cluster_file)
-        cmd += ' -z {}'.format(self.sample_file)
-        cmd += ' -t {}'.format(self.num_topics)
-        cmd += ' -w {}'.format(self.num_words)
-        cmd += ' -a {}'.format(self.alpha)
-        cmd += ' -b {}'.format(self.beta)
-        cmd += ' -e {}'.format(self.eta)
-        cmd += ' -n {}'.format(epochs)
-        cmd += ' -r {}'.format(self.rand_seed)
-        cmd += ' -o {}'.format(self.output_dir)
+        try:
+            # make sure argument values are correctly setup before passing to C++ main function
+            cmd = 'train'    # windows
+            # cmd = './train'  # linux
+            cmd += ' -f {}'.format(self.bow_file)
+            cmd += ' -v {}'.format(self.vocab_file)
+            cmd += ' -c {}'.format(self.cluster_file)
+            cmd += ' -z {}'.format(self.sample_file)
+            cmd += ' -t {}'.format(self.num_topics)
+            cmd += ' -w {}'.format(self.num_words)
+            cmd += ' -a {}'.format(self.alpha)
+            cmd += ' -b {}'.format(self.beta)
+            cmd += ' -e {}'.format(self.eta)
+            cmd += ' -n {}'.format(epochs)
+            cmd += ' -r {}'.format(self.rand_seed)
+            cmd += ' -o {}'.format(self.output_dir)
 
-        print(cmd)
-        os.system(cmd)
+            print(cmd)
+            os.system(cmd)
+        exit_code = os.system(cmd)
+        if exit_code != 0:
+            raise Exception("external inference failed")
+        print("inference success")
+        except Exception as e:
+            print(f"inference failed: {e}")
