@@ -309,8 +309,8 @@ class StableLDA():
 
     def inference(self, epochs):
         # make sure argument values are correctly setup before passing to C++ main function
-        #cmd = 'train'    # windows
-        cmd = './train'  # linux
+        cmd = 'train'    # windows
+        # cmd = './train'  # linux
         cmd += ' -f {}'.format(self.bow_file)
         cmd += ' -v {}'.format(self.vocab_file)
         cmd += ' -c {}'.format(self.cluster_file)

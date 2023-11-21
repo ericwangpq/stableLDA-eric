@@ -10,6 +10,6 @@ train: train.cpp $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(OBJS)
 
 clean:
-	#del *.o train.exe
-	rm -f *.o main
+	del *.o train.exe
+	# rm -f *.o main
 
