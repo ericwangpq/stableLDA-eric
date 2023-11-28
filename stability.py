@@ -121,6 +121,7 @@ def topwords_stability(tm1, tm2, alignment):  # compute document stability of tw
         similarity.append(sim)
     return (np.mean(similarity))
 
+
 def compute_perlexity(bow, theta, phi):
     print('compute likelihood')
     loglikelihood = 0.0
@@ -142,7 +143,8 @@ def compute_coherence(gensim_bow, text, id2word, topics, coherence_score='c_npmi
     cm = CoherenceModel(topics=topics, corpus=gensim_bow, texts=text, dictionary=id2word, coherence=coherence_score)
     return cm.get_coherence()
 
-def load_topic_model_results(doc_path, vocab_path, theta_path, phi_path): #load a trained topic model
+
+def load_topic_model_results(doc_path, vocab_path, theta_path, phi_path):  # load a trained topic model
     docs, vocab, theta, phi = [], [], [], []
     vocab2id = {}
     with open(vocab_path, 'r', encoding='utf-8') as f:
@@ -156,9 +158,9 @@ def load_topic_model_results(doc_path, vocab_path, theta_path, phi_path): #load 
 
     with open(theta_path, 'r', encoding='utf-8') as f:
         lines = f.read().splitlines()
-        theta = [ [float(p) for p in line.split() ] for line in lines]
+        theta = [[float(p) for p in line.split()] for line in lines]
     with open(phi_path, 'r', encoding='utf-8') as f:
         lines = f.read().splitlines()
-        phi = [ [float(p) for p in line.split() ] for line in lines]
+        phi = [[float(p) for p in line.split()] for line in lines]
 
     return docs, vocab, theta, phi

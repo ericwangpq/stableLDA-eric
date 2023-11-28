@@ -1,7 +1,3 @@
-# Note
-This code is done by @yya518. I cloned his code and edited just for academic research purposes. 
-For more information and orginal code, refer to: https://github.com/yya518/StableLDA/tree/main
----
 ## Stable LDA  -- Extracting Actionable Insights from Text Data
 
 ### Introduction
