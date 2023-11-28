@@ -1,7 +1,6 @@
 #include "nodes.h"
 #include "utility.h"
 
-#include <typeinfo>
 #include <iostream>
 #include <vector>
 #include <cmath>
